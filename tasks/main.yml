@@ -1,0 +1,70 @@
+
+---
+
+- name: install prerequisite software
+  apt:
+      name: git
+      state: present
+
+- name: get a random string
+  local_action: command /usr/bin/makepasswd --chars 20
+  register: gitea_secret_key
+  tags: serviceuser
+
+- name: set the secret key
+  set_fact:
+      gitea_secret: "{{ gitea_secret_key.stdout }}"
+  tags: serviceuser
+
+- name: create a suitable group
+  group: name=_gitea state=present
+  tags: serviceuser
+
+
+- name: create a suitable user
+  user:
+      name: _gitea
+      group: _gitea
+      shell: /bin/bash
+      generate_ssh_key: yes
+      home: "{{ gitea_install_path | dirname }}"
+      state: present
+  tags: serviceuser
+
+
+- name: create an app directory structure inside the user's home
+  file:
+      dest: "{{ gitea_install_path }}/custom/conf"
+      state: directory
+      owner: _gitea
+
+- name: copy the binary
+  copy:
+      src: "files/{{ gitea_binary }}"
+      dest: "{{ gitea_install_path }}"
+      mode: 0755
+  notify:
+      - restart gitea
+
+- name: copy the config file
+  template:
+      src: templates/app.ini.j2
+      dest: "{{ gitea_install_path }}/custom/conf/app.ini"
+  notify:
+      - restart gitea
+
+
+- name: create a file for the unit
+  file:
+      name: /usr/local/lib/systemd/system
+      state: directory
+
+- name: copy the service file
+  template:
+      src: templates/gitea.service.j2
+      dest: /usr/local/lib/systemd/system
+  notify:
+      - restart gitea
+
+# target path:
+#   /etc/systemd/system/multi-user.target.wants/gitea.service

@@ -1,0 +1,55 @@
+APP_NAME = Gitea
+RUN_USER = {{ gitea_user }}
+RUN_MODE = prod
+
+[database]
+# DB_TYPE  = sqlite3
+DB_TYPE  = {{ db_type }}
+HOST     = {{ db_host }}
+NAME     = {{ db_name }}
+USER     = {{ db_user }}
+PASSWD   = {{ db_pass }}
+SSL_MODE = disable
+PATH     = data/gitea.db
+
+[repository]
+ROOT = {{ gitea_repo_root }}
+
+[server]
+START_SSH_SERVER = false
+SSH_DOMAIN       = {{ ssh_host }}
+HTTP_PORT        = {{ http_port }}
+ROOT_URL         = http://{{ http_urlhost }}:{{ http_port }}/
+DISABLE_SSH      = false
+SSH_PORT         = {{ ssh_port }}
+LFS_START_SERVER = false
+OFFLINE_MODE     = false
+
+[mailer]
+ENABLED = false
+
+[service]
+REGISTER_EMAIL_CONFIRM     = false
+ENABLE_NOTIFY_MAIL         = false
+DISABLE_REGISTRATION       = false
+ENABLE_CAPTCHA             = false
+REQUIRE_SIGNIN_VIEW        = false
+DEFAULT_KEEP_EMAIL_PRIVATE = false
+NO_REPLY_ADDRESS           = noreply.example.org
+
+[picture]
+DISABLE_GRAVATAR        = true
+ENABLE_FEDERATED_AVATAR = false
+
+[session]
+PROVIDER = file
+
+[log]
+MODE      = {{ gitea_log_mode }}
+LEVEL     = {{ gitea_log_level }}
+ROOT_PATH = {{ gitea_log_dir }}
+
+[security]
+INSTALL_LOCK = true
+SECRET_KEY   = {{ gitea_secret }}
+
