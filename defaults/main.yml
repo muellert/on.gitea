@@ -2,6 +2,7 @@
 ---
 
 gitea_user: _gitea
+gitea_group: _gitea
 
 gitea_install_path: /srv/apps/gitea/gitea
 
@@ -11,7 +12,7 @@ gitea_gid: 10001
 
 gitea_binary: gitea-1.2-linux-amd64
 
-gitea_repo_root: /srv/apps/gitea/gitea-repositories
+gitea_repo_root: /srv/data/gitea-repositories
 
 gitea_log_dir: /srv/apps/gitea/log
 gitea_log_level: Info
@@ -25,10 +26,18 @@ db_user: gitea
 db_pass: giteagitea
 
 
-http_port: 3000
-http_urlhost: 127.0.0.1
+http_protocol: https
+http_urlhost: git.oeko.net
 
+http_addr: 127.0.0.1
+http_port: 3000
 
 ssh_host: 127.0.0.1
 ssh_port: 22
+
+ssh_start_server: false
+
+gitea_session_provider: redis
+gitea_session_provider_config: network=tcp,addr=127.0.0.1:6379,password=gitea_redis,db=0,pool_size=100,idle_timeout=180
+gitea_session_cookie_secure: true
 

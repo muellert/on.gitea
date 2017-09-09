@@ -6,20 +6,12 @@
       name: git
       state: present
 
-- name: get a random string
-  local_action: command /usr/bin/makepasswd --chars 20
-  register: gitea_secret_key
-  tags: serviceuser
-
-- name: set the secret key
-  set_fact:
-      gitea_secret: "{{ gitea_secret_key.stdout }}"
-  tags: serviceuser
-
 - name: create a suitable group
-  group: name=_gitea state=present
+  group:
+      name: _gitea
+      gid: "{{ gitea_gid }}"
+      state: present
   tags: serviceuser
-
 
 - name: create a suitable user
   user:
@@ -27,16 +19,27 @@
       group: _gitea
       shell: /bin/bash
       generate_ssh_key: yes
+      uid: "{{ gitea_uid }}"
       home: "{{ gitea_install_path | dirname }}"
       state: present
   tags: serviceuser
 
+# home: "{{ gitea_install_path + '/..' }}"
 
 - name: create an app directory structure inside the user's home
   file:
       dest: "{{ gitea_install_path }}/custom/conf"
       state: directory
-      owner: _gitea
+      owner: "{{ gitea_user }}"
+      group: "{{ gitea_group }}"
+      mode: 0600
+
+- name: create a directory for the repositories
+  file:
+      dest: "{{ gitea_repo_root }}"
+      state: directory
+      owner: "{{ gitea_user }}"
+      group: "{{ gitea_group }}"
 
 - name: copy the binary
   copy:
@@ -46,13 +49,24 @@
   notify:
       - restart gitea
 
+- name: get a random string
+  local_action: command /usr/bin/makepasswd --chars 20
+  register: gitea_secret_key
+  tags: serviceuser
+
+- name: set the secret key
+  set_fact:
+      gitea_secret: "{{ gitea_secret_key.stdout | default('test run')}}"
+  tags: serviceuser
+
+- debug: var=gitea_secret
+
 - name: copy the config file
   template:
       src: templates/app.ini.j2
       dest: "{{ gitea_install_path }}/custom/conf/app.ini"
   notify:
       - restart gitea
-
 
 - name: create a file for the unit
   file:
@@ -62,9 +76,12 @@
 - name: copy the service file
   template:
       src: templates/gitea.service.j2
-      dest: /usr/local/lib/systemd/system
+      dest: /usr/local/lib/systemd/system/gitea.service
   notify:
       - restart gitea
+
+- name: enable the gitea service
+  service: name=gitea state=restarted enabled=yes
 
 # target path:
 #   /etc/systemd/system/multi-user.target.wants/gitea.service

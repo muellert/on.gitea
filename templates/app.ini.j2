@@ -10,20 +10,28 @@ NAME     = {{ db_name }}
 USER     = {{ db_user }}
 PASSWD   = {{ db_pass }}
 SSL_MODE = disable
-PATH     = data/gitea.db
+# PATH     = data/gitea.db
 
 [repository]
 ROOT = {{ gitea_repo_root }}
+FORCE_PRIVATE = true
 
 [server]
-START_SSH_SERVER = false
-SSH_DOMAIN       = {{ ssh_host }}
+
+PROTOCOL         = {{ http_port }}
+
+HTTP_ADDR        = {{ http_addr }}
 HTTP_PORT        = {{ http_port }}
-ROOT_URL         = http://{{ http_urlhost }}:{{ http_port }}/
+ROOT_URL         = {{ http_protocol }}://{{ http_urlhost }}/{{ url_path | default('') }}
 DISABLE_SSH      = false
 SSH_PORT         = {{ ssh_port }}
+
 LFS_START_SERVER = false
 OFFLINE_MODE     = false
+
+START_SSH_SERVER = {{ ssh_start_server }}
+SSH_DOMAIN       = {{ ssh_host }}
+
 
 [mailer]
 ENABLED = false
@@ -35,14 +43,17 @@ DISABLE_REGISTRATION       = false
 ENABLE_CAPTCHA             = false
 REQUIRE_SIGNIN_VIEW        = false
 DEFAULT_KEEP_EMAIL_PRIVATE = false
-NO_REPLY_ADDRESS           = noreply.example.org
+NO_REPLY_ADDRESS           = noreply.example.com
 
 [picture]
 DISABLE_GRAVATAR        = true
 ENABLE_FEDERATED_AVATAR = false
 
 [session]
-PROVIDER = file
+PROVIDER = {{ gitea_session_provider }}
+PROVIDER_CONFIG = {{ gitea_session_provider_config }}
+COOKIE_SECURE = {{ gitea_session_cookie_secure }}
+
 
 [log]
 MODE      = {{ gitea_log_mode }}

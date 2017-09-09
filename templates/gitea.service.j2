@@ -4,12 +4,11 @@ After=network.target
 
 [Service]
 Type=simple
-Restart=no
+Restart=on-failure
 User=_gitea
 RootDirectory=/
-WorkingDirectory={{ gitea_install_path }}
-ExecStart={{ gitea_install_path }}/{{ gitea_binary }} web -p {{ http_port }}
-
+WorkingDirectory={{ gitea_install_path | dirname }}
+ExecStart={{ gitea_install_path }}/{{ gitea_binary }} web -p {{ http_port }} 
 
 [Install]
 WantedBy=multi-user.target
