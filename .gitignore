@@ -1,0 +1,6 @@
+*.pyc
+*~
+root_password
+Attic/
+.zcache
+*.retry
