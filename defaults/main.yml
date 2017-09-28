@@ -19,18 +19,18 @@ gitea_log_level: Info
 gitea_log_mode: file
 
 
-db_type: postgres
-db_host: localhost
-db_name: gitea_test
-db_user: gitea
-db_pass: giteagitea
+gitea_db_type: postgres
+gitea_db_host: localhost
+gitea_db_name: gitea_test
+gitea_db_user: gitea
+gitea_db_pass: giteagitea
 
 
-http_protocol: https
-http_urlhost: git.oeko.net
+gitea_http_protocol: https
+gitea_http_urlhost: git.oeko.net
 
-http_addr: 127.0.0.1
-http_port: 3000
+gitea_http_addr: 127.0.0.1
+gitea_http_port: 3000
 
 ssh_host: 127.0.0.1
 ssh_port: 22
@@ -38,6 +38,6 @@ ssh_port: 22
 ssh_start_server: false
 
 gitea_session_provider: redis
-gitea_session_provider_config: network=tcp,addr=127.0.0.1:6379,password=gitea_redis,db=0,pool_size=100,idle_timeout=180
+gitea_session_provider_config: network=tcp,addr=127.0.0.1:6379,pool_size=100,idle_timeout=180
 gitea_session_cookie_secure: true
 

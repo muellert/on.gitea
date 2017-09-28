@@ -5,4 +5,5 @@
       state: restarted
       enabled: yes
       daemon_reload: yes
+  ignore_errors: yes
 
