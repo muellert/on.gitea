@@ -8,15 +8,15 @@
 
 - name: create a suitable group
   group:
-      name: _gitea
+      name: "{{ gitea_group }}"
       gid: "{{ gitea_gid }}"
       state: present
   tags: serviceuser
 
 - name: create a suitable user
   user:
-      name: _gitea
-      group: _gitea
+      name: "{{ gitea_user }}"
+      group: "{{ gitea_group }}"
       shell: /bin/bash
       generate_ssh_key: yes
       uid: "{{ gitea_uid }}"
@@ -24,15 +24,19 @@
       state: present
   tags: serviceuser
 
-# home: "{{ gitea_install_path + '/..' }}"
-
 - name: create an app directory structure inside the user's home
   file:
-      dest: "{{ gitea_install_path }}/custom/conf"
+      dest: "{{ item }}"
       state: directory
       owner: "{{ gitea_user }}"
       group: "{{ gitea_group }}"
-      mode: 0600
+      mode: 0700
+  with_items:
+      - "{{ gitea_install_path | dirname }}"
+      - "{{ gitea_install_path }}/custom/conf"
+      - "{{ gitea_install_path }}/data"
+      - "{{ gitea_install_path }}/../log"
+      - "{{ gitea_install_path }}/indexers"
 
 - name: create a directory for the repositories
   file:
@@ -65,6 +69,8 @@
   template:
       src: templates/app.ini.j2
       dest: "{{ gitea_install_path }}/custom/conf/app.ini"
+      owner: "{{ gitea_user }}"
+      group: "{{ gitea_group }}"
   notify:
       - restart gitea
 
@@ -77,11 +83,12 @@
   template:
       src: templates/gitea.service.j2
       dest: /usr/local/lib/systemd/system/gitea.service
-  notify:
-      - restart gitea
 
 - name: enable the gitea service
   service: name=gitea state=restarted enabled=yes
+  notify:
+      - reload systemd
+      - restart gitea
 
 # target path:
 #   /etc/systemd/system/multi-user.target.wants/gitea.service
