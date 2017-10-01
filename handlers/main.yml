@@ -1,9 +1,13 @@
 
+- name: reload systemd
+  systemd:
+      name: gitea
+      daemon_reload: yes
+
 - name: restart gitea
   systemd:
       name: gitea
       state: restarted
       enabled: yes
-      daemon_reload: yes
   ignore_errors: yes
 
