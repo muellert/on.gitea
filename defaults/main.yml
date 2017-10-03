@@ -32,8 +32,8 @@ gitea_http_urlhost: git.oeko.net
 gitea_http_addr: 127.0.0.1
 gitea_http_port: 3000
 
-ssh_host: 127.0.0.1
-ssh_port: 22
+gitea_ssh_host: 127.0.0.1
+gitea_ssh_port: 22
 
 ssh_start_server: false
 
