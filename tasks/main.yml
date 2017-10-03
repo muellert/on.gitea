@@ -54,7 +54,7 @@
       - restart gitea
 
 - name: get a random string
-  local_action: command /usr/bin/makepasswd --chars 20
+  local_action: command /usr/bin/makepasswd --chars 30
   register: gitea_secret_key
   tags: serviceuser
 
@@ -73,6 +73,24 @@
       group: "{{ gitea_group }}"
   notify:
       - restart gitea
+
+- name: copy the branding
+  copy:
+      src: "{{ item }}"
+      dest: "{{ gitea_install_path }}/custom/"
+      owner: "{{ gitea_user }}"
+      group: "{{ gitea_group }}"
+  with_items:
+      - files/public
+      - files/templates
+  notify:
+      - restart gitea
+
+- name: create an admin user
+  command: "{{ gitea_install_path }}/{{ gitea_binary }} admin create-user --name {{ gitea_admin_username }} --password {{ gitea_admin_password | quote }} --email {{ gitea_admin_email  }} --admin"
+  become: true
+  become_user: "{{ gitea_user }}"
+  ignore_errors: yes
 
 - name: create a file for the unit
   file:
