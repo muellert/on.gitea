@@ -34,7 +34,27 @@ SSH_DOMAIN       = {{ ssh_host }}
 
 
 [mailer]
+{% if gitea_mailer_from is defined %}
+ENABLED = true
+HOST = {{ gitea_mailer_host }}
+FROM = {{ gitea_mailer_from }}
+
+{% if gitea_mailer_user is defined %}
+USER = {{ gitea_mailer_user }}
+PASSWD = {{ gitea_mailer_passwd }}
+{% endif %}
+{% else %}
 ENABLED = false
+{% endif %}
+
+
+{% if gitea_cache_adapter is defined %}
+
+[cache]
+ADAPTER = {{ gitea_cache_adapter }}
+HOST = {{ gitea_cache_host }}
+{% endif %}
+
 
 [service]
 REGISTER_EMAIL_CONFIRM     = false
@@ -49,10 +69,12 @@ NO_REPLY_ADDRESS           = noreply.example.com
 DISABLE_GRAVATAR        = true
 ENABLE_FEDERATED_AVATAR = false
 
+{% if gitea_session_provider is defined %}
 [session]
 PROVIDER = {{ gitea_session_provider }}
 PROVIDER_CONFIG = {{ gitea_session_provider_config }}
 COOKIE_SECURE = {{ gitea_session_cookie_secure }}
+{% endif %}
 
 
 [log]
