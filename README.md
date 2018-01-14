@@ -10,6 +10,12 @@ ancilliary software, like a database server or webserer.
 The role is intended to be used together with our other roles and the
 general Ansible configuration framework we are using.
 
+On upgrading gitea, the SSH authorized_keys file and the hook scripts
+for **ALL** repositories need to be updated along these lines:
+
+# in the repository directory of gitea, run this:
+# perl -i.bak -p -e '$_ =~ s/-1.2-/-1.2.2-/;' **/**/hooks/p*-receive.d/gitea  **/**/hooks/update.d/gitea
+
 
 Requirements
 ------------
@@ -75,5 +81,5 @@ Author Information
 ------------------
 
 Toni Mueller <support@oeko.net>
-(c) 2017
+(c) 2017-2018
 
