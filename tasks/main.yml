@@ -45,15 +45,19 @@
       owner: "{{ gitea_user }}"
       group: "{{ gitea_group }}"
 
-# this needs to be changed to download the binary, if not of the
-# specified version:
 - name: copy the binary
   copy:
-      src: "files/{{ gitea_binary }}"
-      dest: "{{ gitea_install_path }}"
+      src: "files/{{ gitea_source_binary }}"
+      dest: "{{ gitea_install_path }}/{{ gitea_binary }}"
+      backup: yes
       mode: 0755
   notify:
       - restart gitea
+  when: not gitea_download
+
+- name: download the binary
+  include: get-binary.yml
+  when: gitea_download
 
 - name: get a random string
   local_action: command /usr/bin/makepasswd --chars 30
@@ -98,7 +102,7 @@
 - name: copy the wrapper for the binary
   template:
       src: templates/gitea.sh.j2
-      dest: {{ gitea_install_path }}/{{ gitea_wrapper }}
+      dest: "{{ gitea_install_path }}/{{ gitea_wrapper }}"
       mode: 0755
   notify:
       - restart gitea
