@@ -63,6 +63,7 @@
   local_action: command /usr/bin/makepasswd --chars 30
   register: gitea_secret_key
   tags: serviceuser
+  become: false
 
 - name: set the secret key
   set_fact:
