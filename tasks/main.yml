@@ -55,7 +55,7 @@
       - restart gitea
   when: not gitea_download
 
-- name: download the binary
+- name: download the binary to the target machine
   include: get-binary.yml
   when: gitea_download
 
