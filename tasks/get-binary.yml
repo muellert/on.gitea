@@ -32,9 +32,3 @@
     - restart gitea
   when: "download_success.rc == 0"
 
-#- name: copy the binary over
-#command: "mv /tmp/{{ gitea_source_binary }} {{ gitea_install_path }}/{{ gitea_binary }}"
-#notify:
-#    - restart gitea
-#when: "download_success.rc == 0"
-
