@@ -24,7 +24,7 @@ HTTP_ADDR        = {{ gitea_http_addr }}
 HTTP_PORT        = {{ gitea_http_port }}
 ROOT_URL         = {{ gitea_http_protocol }}://{{ gitea_http_urlhost }}{{ gitea_url_path | default('/') }}
 DISABLE_SSH      = false
-SSH_PORT         = {{ ssh_port }}
+SSH_PORT         = {{ gitea_ssh_port }}
 
 LFS_START_SERVER = false
 OFFLINE_MODE     = false
