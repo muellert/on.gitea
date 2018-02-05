@@ -45,19 +45,29 @@
       owner: "{{ gitea_user }}"
       group: "{{ gitea_group }}"
 
-- name: copy the binary
-  copy:
-      src: "files/{{ gitea_source_binary }}"
-      dest: "{{ gitea_install_path }}/{{ gitea_binary }}"
-      backup: yes
-      mode: 0755
-  notify:
-      - restart gitea
-  when: not gitea_download
+#- name: copy the binary
+#  copy:
+#      src: "files/{{ gitea_source_binary }}"
+#      dest: "{{ gitea_install_path }}/{{ gitea_binary }}"
+#      backup: yes
+#      mode: 0755
+#  notify:
+#      - restart gitea
+#  when: not gitea_download
 
 - name: download the binary to the target machine
   include: get-binary.yml
   when: gitea_download
+
+- name: download the binary to the controller machine
+  include: copy-binary.yml
+  when: not gitea_download
+
+- name: create a file to signal success
+  file:
+      path: "{{ gitea_install_path }}/{{ gitea_version }}.stamp"
+      state: touch
+      mode: 0644
 
 - name: get a random string
   local_action: command /usr/bin/makepasswd --chars 30

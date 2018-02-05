@@ -1,20 +1,20 @@
 
 ---
 
-- name: download the binary
-  get_url:
+- name: download the binary locally
+  local_action get_url:
       url: "{{ item }}"
-      dest: "{{ gitea_download_dir }}"
+      dest: "files"
       mode: 0755
       backup: yes
   with_items:
       - "{{ gitea_download_url }}.sha256"
       - "{{ gitea_download_url }}"
 
-- name: verify the checksum
-  shell: "sha256sum {{ gitea_source_binary }} | diff -uw - {{ gitea_source_binary }}.sha256"
+- name: verify the checksum locally
+  local_action shell: "sha256sum {{ gitea_source_binary }} | diff -uw - {{ gitea_source_binary }}.sha256"
   args:
-    chdir: "{{ gitea_download_dir }}"
+    chdir: "file"
   register: download_success
 
 - name: display the result of the previous command
@@ -22,11 +22,10 @@
 
 - name: copy the binary over
   copy:
-      src: "{{ gitea_download_dir }}/{{ gitea_source_binary }}"
+      src: "files/{{ gitea_source_binary }}"
       dest: "{{ gitea_install_path }}/{{ gitea_binary }}"
       owner: root
       mode: 0755
-      remote_src: yes
       backup: yes
   notify:
     - restart gitea
@@ -37,4 +36,5 @@
 #notify:
 #    - restart gitea
 #when: "download_success.rc == 0"
+
 
