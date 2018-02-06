@@ -10,8 +10,10 @@ ancilliary software, like a database server or webserer.
 The role is intended to be used together with our other roles and the
 general Ansible configuration framework we are using.
 
-On upgrading gitea, the SSH authorized_keys file and the hook scripts
-for **ALL** repositories need to be updated along these lines:
+We use this role together with a PostgreSQL database, a REDIS session
+store, and nginx as a frontend, and on Debian/Stretch. For other
+scenarios, you might need to make some adjustments.
+
 
 
 Requirements
