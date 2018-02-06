@@ -47,12 +47,12 @@ db_user:            database configuration
 db_pass:            database configuration
 
 
-http_port:          web interface
-http_urlhost:       web interface
+gitea_http_port:          web interface
+gitea_http_urlhost:       web interface
 
 
-ssh_host:           ssh configuration
-ssh_port:           ssh configuration
+gitea_ssh_host:           ssh configuration
+gitea_ssh_port:           ssh configuration
 
 
 Dependencies
