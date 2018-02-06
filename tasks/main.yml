@@ -74,18 +74,6 @@
   notify:
       - restart gitea
 
-- name: copy the branding
-  copy:
-      src: "{{ item }}"
-      dest: "{{ gitea_install_path }}/custom/"
-      owner: "{{ gitea_user }}"
-      group: "{{ gitea_group }}"
-  with_items:
-      - files/public
-      - files/templates
-  notify:
-      - restart gitea
-
 - name: create an admin user
   command: "{{ gitea_install_path }}/{{ gitea_binary }} admin create-user --name {{ gitea_admin_username }} --password {{ gitea_admin_password | quote }} --email {{ gitea_admin_email  }} --admin"
   become: true
