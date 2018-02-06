@@ -37,6 +37,7 @@
       - "{{ gitea_install_path }}/data"
       - "{{ gitea_install_path }}/../log"
       - "{{ gitea_install_path }}/indexers"
+  tags: files
 
 - name: create a directory for the repositories
   file:
@@ -44,43 +45,47 @@
       state: directory
       owner: "{{ gitea_user }}"
       group: "{{ gitea_group }}"
-
-#- name: copy the binary
-#  copy:
-#      src: "files/{{ gitea_source_binary }}"
-#      dest: "{{ gitea_install_path }}/{{ gitea_binary }}"
-#      backup: yes
-#      mode: 0755
-#  notify:
-#      - restart gitea
-#  when: not gitea_download
+  tags: files
 
 - name: download the binary to the target machine
   include: get-binary.yml
   when: gitea_download
+  tags: files
 
 - name: download the binary to the controller machine
   include: copy-binary.yml
   when: not gitea_download
+  tags: files
 
 - name: create a file to signal success
   file:
       path: "{{ gitea_install_path }}/{{ gitea_version }}.stamp"
       state: touch
       mode: 0644
+  tags: files
 
 - name: get a random string
   local_action: command /usr/bin/makepasswd --chars 30
   register: gitea_secret_key
   tags: serviceuser
   become: false
+  tags: service
 
 - name: set the secret key
   set_fact:
       gitea_secret: "{{ gitea_secret_key.stdout | default('test run')}}"
-  tags: serviceuser
+  tags: service
 
 - debug: var=gitea_secret
+
+- name: copy the service file
+  template:
+      src: templates/gitea.service.j2
+      dest: /usr/local/lib/systemd/system/gitea.service
+  notify:
+      - reload systemd
+      - restart gitea
+  tags: service
 
 - name: copy the config file
   template:
@@ -90,6 +95,7 @@
       group: "{{ gitea_group }}"
   notify:
       - restart gitea
+  tags: service
 
 - name: create an admin user
   command: "{{ gitea_install_path }}/{{ gitea_binary }} admin create-user --name {{ gitea_admin_username }} --password {{ gitea_admin_password | quote }} --email {{ gitea_admin_email  }} --admin"
@@ -102,27 +108,11 @@
       name: /usr/local/lib/systemd/system
       state: directory
 
-- name: copy the service file
-  template:
-      src: templates/gitea.service.j2
-      dest: /usr/local/lib/systemd/system/gitea.service
-  notify:
-      - reload systemd
-      - restart gitea
-
-- name: copy the wrapper for the binary
-  template:
-      src: templates/gitea.sh.j2
-      dest: "{{ gitea_install_path }}/{{ gitea_wrapper }}"
-      mode: 0755
-  notify:
-      - restart gitea
-
 - name: enable the gitea service
-  service: name=gitea state=restarted enabled=yes
+  systemd:
+      name: gitea
+      enabled: yes
   notify:
       - reload systemd
       - restart gitea
 
-# target path:
-#   /etc/systemd/system/multi-user.target.wants/gitea.service
