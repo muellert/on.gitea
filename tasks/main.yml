@@ -45,6 +45,8 @@
       owner: "{{ gitea_user }}"
       group: "{{ gitea_group }}"
 
+# this needs to be changed to download the binary, if not of the
+# specified version:
 - name: copy the binary
   copy:
       src: "files/{{ gitea_binary }}"
@@ -89,6 +91,17 @@
   template:
       src: templates/gitea.service.j2
       dest: /usr/local/lib/systemd/system/gitea.service
+  notify:
+      - reload systemd
+      - restart gitea
+
+- name: copy the wrapper for the binary
+  template:
+      src: templates/gitea.sh.j2
+      dest: {{ gitea_install_path }}/{{ gitea_wrapper }}
+      mode: 0755
+  notify:
+      - restart gitea
 
 - name: enable the gitea service
   service: name=gitea state=restarted enabled=yes

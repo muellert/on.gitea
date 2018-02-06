@@ -8,7 +8,7 @@ Restart=on-failure
 User=_gitea
 RootDirectory=/
 WorkingDirectory={{ gitea_install_path }}
-ExecStart={{ gitea_install_path }}/{{ gitea_binary }} web -p {{ gitea_http_port }} 
+ExecStart={{ gitea_install_path }}/{{ gitea_wrapper }} web -p {{ gitea_http_port }} 
 
 [Install]
 WantedBy=multi-user.target
