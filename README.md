@@ -10,8 +10,8 @@ ancilliary software, like a database server or webserer.
 The role is intended to be used together with our other roles and the
 general Ansible configuration framework we are using.
 
-We use this role together with a PostgreSQL database, a REDIS session
-store, and nginx as a frontend, and on Debian/Stretch. For other
+This role has been tested together with a PostgreSQL database, a REDIS
+session store, and nginx as a frontend, and on Debian/Stretch. For other
 scenarios, you might need to make some adjustments.
 
 
