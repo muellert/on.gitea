@@ -3,12 +3,10 @@ Gitea
 
 Install Gitea
 
-This role only deals with the configuration of Gitea, but does not deal
-with downloading the software, nor with the configuration of any
-ancilliary software, like a database server or webserer.
-
-The role is intended to be used together with our other roles and the
-general Ansible configuration framework we are using.
+This role only deals with the configuration of Gitea. It has partial
+download support. It does not deal with the installation or
+configuration of any ancilliary software, like a database server or
+webserer.
 
 This role has been tested together with a PostgreSQL database, a REDIS
 session store, and nginx as a frontend, and on Debian/Stretch. For other
