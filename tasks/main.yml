@@ -78,6 +78,11 @@
 
 - debug: var=gitea_secret
 
+- name: where to store the service file
+  file:
+      name: /usr/local/lib/systemd/system
+      state: directory
+
 - name: copy the service file
   template:
       src: templates/gitea.service.j2
@@ -91,10 +96,16 @@
   template:
       src: templates/app.ini.j2
       dest: "{{ gitea_install_path }}/custom/conf/app.ini"
+      backup: true
       owner: "{{ gitea_user }}"
       group: "{{ gitea_group }}"
   notify:
       - restart gitea
+  tags: service
+
+- meta: flush_handlers
+  tags: service
+- debug: msg="handlers flushed"
   tags: service
 
 - name: create an admin user
@@ -102,17 +113,21 @@
   become: true
   become_user: "{{ gitea_user }}"
   ignore_errors: yes
+  tags: service
 
-- name: create a file for the unit
-  file:
-      name: /usr/local/lib/systemd/system
-      state: directory
+- name: enable the service
+  service:
+      name: gitea
+      enabled: yes
+  tags: service
 
 - name: enable the gitea service
   systemd:
       name: gitea
       enabled: yes
+      daemon_reload: yes
   notify:
       - reload systemd
       - restart gitea
+  tags: service
 
