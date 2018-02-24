@@ -1,27 +1,46 @@
 
 ---
 
-- name: download the binary
+- name: download the checksum file
   get_url:
-      url: "{{ item }}"
+      url: "{{ gitea_download_url }}.sha256"
       dest: "{{ gitea_download_dir }}"
+      mode: 0644
+      backup: yes
+
+- name: put the new checksum into a variable
+  shell: "cat {{ gitea_download_dir }}/{{ gitea_source_binary }}.sha256 | cut -f1 -d ' '"
+  register: dl_checksum
+
+- debug: var=dl_checksum
+
+- name: check whether we have the file already
+  stat:
+      path: "{{ gitea_install_path }}/{{ gitea_binary }}"
+      checksum_algorithm: sha256
+  register: old_file
+
+- debug: var=old_file
+
+- name: check whether a newly downloaded file is ok
+  stat:
+      path: "{{ gitea_download_dir }}/{{ gitea_source_binary }}"
+      checksum_algorithm: sha256
+  register: new_file
+
+- debug: var=new_file
+
+  # download the binary and install, if the download was successful
+- get_url:
+      url: "{{ gitea_download_url }}"
+      dest: "{{ gitea_download_dir }}"
+      checksum: "sha256:{{ dl_checksum.stdout }}"
       mode: 0755
       backup: yes
-  with_items:
-      - "{{ gitea_download_url }}.sha256"
-      - "{{ gitea_download_url }}"
-
-- name: verify the checksum
-  shell: "sha256sum {{ gitea_source_binary }} | diff -uw - {{ gitea_source_binary }}.sha256"
-  args:
-    chdir: "{{ gitea_download_dir }}"
-  register: download_success
-
-- name: display the result of the previous command
-  debug: var="{{ download_success }}"
-
-- name: copy the binary over
-  copy:
+  when: not ( old_file.stat.exists or new_file.stat.exists ) or
+        ( old_file.stat.exists and old_file.stat.checksum != dl_checksum or
+          new_file.stat.exists and new_file.stat.checksum != dl_checksum )
+- copy:
       src: "{{ gitea_download_dir }}/{{ gitea_source_binary }}"
       dest: "{{ gitea_install_path }}/{{ gitea_binary }}"
       owner: root
@@ -30,5 +49,5 @@
       backup: yes
   notify:
     - restart gitea
-  when: "download_success.rc == 0"
+  when: old_file.stat.exists and old_file.stat.checksum != dl_checksum.stdout
 
