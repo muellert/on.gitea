@@ -1,6 +1,9 @@
 
 ---
 
+gitea_version: 1.4.2
+
+
 gitea_user: _gitea
 gitea_group: _gitea
 
