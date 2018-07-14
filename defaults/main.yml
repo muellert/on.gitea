@@ -7,7 +7,7 @@ gitea_version: 1.4.2
 gitea_user: _gitea
 gitea_group: _gitea
 
-gitea_install_path: /srv/apps/gitea/gitea
+gitea_install_path: /path/to/gitea
 
 gitea_uid: 10001
 gitea_gid: 10001
@@ -33,7 +33,7 @@ gitea_db_pass: giteagitea
 
 
 gitea_http_protocol: https
-gitea_http_urlhost: git.oeko.net
+gitea_http_urlhost: git.example.com
 
 gitea_http_addr: 127.0.0.1
 gitea_http_port: 3000
