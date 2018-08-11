@@ -1,6 +1,8 @@
 
 ---
 
+- include_tasks: create-directories.yaml
+
 - name: install prerequisite software
   apt:
       name: git
@@ -50,11 +52,11 @@
 - name: download the binary to the target machine
   include: get-binary.yml
   when: gitea_download
-  tags: files
+  tags: download
 
 - name: download the binary to the controller machine
   include: copy-binary.yml
-  when: not gitea_download
+  # when: not gitea_download
   tags: files
 
 - name: create a file to signal success
