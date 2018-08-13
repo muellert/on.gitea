@@ -48,7 +48,7 @@ ENABLED = false
 {% endif %}
 
 
-{% if gitea_cache_adapter is defined %}
+{% if gitea_cache_adapter != "none" %}
 
 [cache]
 ADAPTER = {{ gitea_cache_adapter }}
@@ -69,7 +69,7 @@ NO_REPLY_ADDRESS           = noreply.example.com
 DISABLE_GRAVATAR        = true
 ENABLE_FEDERATED_AVATAR = false
 
-{% if gitea_session_provider is defined %}
+{% if gitea_session_provider != "none" %}
 [session]
 PROVIDER = {{ gitea_session_provider }}
 PROVIDER_CONFIG = {{ gitea_session_provider_config }}
