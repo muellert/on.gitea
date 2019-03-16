@@ -13,11 +13,12 @@ session store, and nginx as a frontend, and on Debian/Stretch. For other
 scenarios, you might need to make some adjustments.
 
 
-
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+This role has currently only been tested on Debian Stretch and Buster,
+and with Ansible version 2.7.
+
 
 Role Variables
 --------------
@@ -55,16 +56,22 @@ gitea_ssh_port:           ssh configuration
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+There are no dependencies on other roles, but a recommended setup
+includes:
+
+ * nginx (I use geerlingguy.nginx)
+ * PostgreSQL
+ * Redis
+
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+After installing a database server and creating the database etc.:
 
     - hosts: servers
       roles:
-         - { role: username.rolename, x: 42 }
+         - { role: on.gitea, gitea_version: 1.7.4 }
 
 License
 -------
@@ -78,5 +85,5 @@ Author Information
 ------------------
 
 Toni Mueller <support@oeko.net>
-(c) 2017-2018
+(c) 2017-2019
 
