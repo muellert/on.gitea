@@ -47,6 +47,7 @@
       state: directory
       owner: "{{ gitea_user }}"
       group: "{{ gitea_group }}"
+      mode: 0700
   tags: files
 
 - name: download the binary to the target machine

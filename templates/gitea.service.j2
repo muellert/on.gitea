@@ -6,6 +6,7 @@ After=network.target
 Type=simple
 Restart=on-failure
 User=_gitea
+UMask=0077
 RootDirectory=/
 WorkingDirectory={{ gitea_install_path }}
 ExecStart={{ gitea_install_path }}/{{ gitea_binary }} web -p {{ gitea_http_port }} 
