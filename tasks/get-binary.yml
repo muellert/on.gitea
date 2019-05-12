@@ -1,34 +1,44 @@
 
 ---
 
-- name: download the checksum file
+- name: download all the files
   get_url:
-      url: "{{ gitea_download_url }}.sha256"
+      url: "{{ item }}"
       dest: "{{ gitea_download_dir }}"
       mode: 0644
       backup: yes
+  with_items:
+      - "{{ gitea_download_url }}"
+      - "{{ gitea_download_url }}.asc"
+      - "{{ gitea_download_url }}.sha256"
 
 - name: put the new checksum into a variable
   shell: "cat {{ gitea_download_dir }}/{{ gitea_source_binary }}.sha256 | cut -f1 -d ' '"
-  register: dl_checksum
+  register: download_checksum
 
-- debug: var=dl_checksum
+# - debug: var=download_checksum
 
 - name: check whether we have the file already
   stat:
       path: "{{ gitea_install_path }}/{{ gitea_binary }}"
       checksum_algorithm: sha256
-  register: old_file
+  register: old_file_checksum
 
-- debug: var=old_file
+# - debug: var=old_file_checksum
 
 - name: check whether a newly downloaded file is ok
   stat:
       path: "{{ gitea_download_dir }}/{{ gitea_source_binary }}"
       checksum_algorithm: sha256
-  register: new_file
+  register: new_file_checksum
 
-- debug: var=new_file
+- name: check whether a newly downloaded file is ok
+  stat:
+      path: "{{ gitea_download_dir }}/{{ gitea_source_binary }}"
+      checksum_algorithm: sha256
+  register: new_file_checksum
+
+# - debug: var=new_file_checksum
 
   # download the binary and install, if the download was successful
 - get_url:
