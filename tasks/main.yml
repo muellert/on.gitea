@@ -7,8 +7,8 @@
 - include: install-postgres.yaml
   when: gitea_db_type == 'postgres'
 
-# - include: install-mariadb.yaml
-#  when: "{{ gitea_db_type == 'mariadb' }}"
+- include: install-mariadb.yaml
+  when: "{{ gitea_db_type == 'mariadb' }}"
 
 
 - name: install prerequisite software

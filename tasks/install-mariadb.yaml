@@ -1,0 +1,14 @@
+
+---
+
+- name: conditionally install a MariaDB server
+  apt:
+      name: "{{ packages }}"
+      state: present
+  vars:
+      packages:
+        - mariadb-server
+        - mariadb-client
+        - python-mysqldb
+        - python3-mysqldb
+  when: "{{ gitea_db_host == 'localhost' }}"
