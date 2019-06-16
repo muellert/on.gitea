@@ -1,63 +1,84 @@
-
 ---
 
-- name: download all the files
+# Conditionally download the gitea binary, the GPG signature and the
+# SHA256 file. If the binary is already installed and the checksum
+# matches, do nothing. Else, download the binary and check the GPG
+# signature. If the signature is ok, install the binary.
+
+
+- name: download the checksum file
   get_url:
-      url: "{{ item }}"
+      url: "{{ gitea_download_url | regex_replace('\\.[gx]z$') }}.sha256"
       dest: "{{ gitea_download_dir }}"
       mode: 0644
       backup: yes
-  with_items:
-      - "{{ gitea_download_url }}"
-      - "{{ gitea_download_url }}.asc"
-      - "{{ gitea_download_url }}.sha256"
+
 
 - name: put the new checksum into a variable
-  shell: "cat {{ gitea_download_dir }}/{{ gitea_source_binary }}.sha256 | cut -f1 -d ' '"
+  shell: "cat {{ gitea_download_dir }}/{{ gitea_uncompressed_binary }}.sha256 | cut -f1 -d ' '"
   register: download_checksum
-
-# - debug: var=download_checksum
+  tags: checksums
 
 - name: check whether we have the file already
   stat:
       path: "{{ gitea_install_path }}/{{ gitea_binary }}"
       checksum_algorithm: sha256
   register: old_file_checksum
+  tags: checksums
 
 # - debug: var=old_file_checksum
+# - debug: var=download_checksum
 
-- name: check whether a newly downloaded file is ok
-  stat:
-      path: "{{ gitea_download_dir }}/{{ gitea_source_binary }}"
-      checksum_algorithm: sha256
-  register: new_file_checksum
+- name: conditionally download the binary and install it
+  block:
+    - debug: msg="Condition evaluated to True."
+    - name: get the gitea key
+      shell: "gpg --recv-keys {{ gitea_gpg_keyid }}"
 
-- name: check whether a newly downloaded file is ok
-  stat:
-      path: "{{ gitea_download_dir }}/{{ gitea_source_binary }}"
-      checksum_algorithm: sha256
-  register: new_file_checksum
+    - name: download the compressed binary and gpg signature
+      get_url:
+          url: "{{ item }}"
+          dest: "{{ gitea_download_dir }}"
+          mode: 0644
+          backup: yes
+      with_items:
+          - "{{ gitea_download_url }}"
+          - "{{ gitea_download_url }}.asc"
 
-# - debug: var=new_file_checksum
+    - name: check the gpg signature
+      shell: "gpg -q --verify {{ gitea_download_dir }}/{{ gitea_source_binary }}.asc  {{ gitea_download_dir }}/{{ gitea_source_binary }}"
+      register: gpg_signature_ok
+      tags: checksums
 
-  # download the binary and install, if the download was successful
-- get_url:
-      url: "{{ gitea_download_url }}"
-      dest: "{{ gitea_download_dir }}"
-      checksum: "sha256:{{ dl_checksum.stdout }}"
-      mode: 0755
-      backup: yes
-  when: not ( old_file.stat.exists or new_file.stat.exists ) or
-        ( old_file.stat.exists and old_file.stat.checksum != dl_checksum or
-          new_file.stat.exists and new_file.stat.checksum != dl_checksum )
-- copy:
-      src: "{{ gitea_download_dir }}/{{ gitea_source_binary }}"
-      dest: "{{ gitea_install_path }}/{{ gitea_binary }}"
-      owner: root
-      mode: 0755
-      remote_src: yes
-      backup: yes
-  notify:
-    - restart gitea
-  when: old_file.stat.exists and old_file.stat.checksum != dl_checksum.stdout
+    # - debug: var=gpg_signature_ok
 
+    - name: uncompress the downloaded file
+      command: "xz -fd {{ gitea_download_dir }}/{{ gitea_source_binary }}"
+
+    - name: check whether a newly downloaded file is ok
+      stat:
+          path: "{{ gitea_download_dir }}/{{ gitea_uncompressed_binary }}"
+          checksum_algorithm: sha256
+      register: new_file_checksum
+      tags: checksums
+
+    # - debug: var=new_file_checksum
+
+    - copy:
+        src: "{{ gitea_download_dir }}/{{ gitea_uncompressed_binary }}"
+        dest: "{{ gitea_install_path }}/{{ gitea_binary }}"
+        owner: root
+        mode: 0755
+        remote_src: yes
+        backup: yes
+      notify:
+        - restart gitea
+
+    - name: create a file to signal success
+      file:
+          path: "{{ gitea_install_path }}/{{ gitea_version }}.stamp"
+          state: touch
+          mode: 0644
+      tags: files
+
+  when: not old_file_checksum.stat.exists or old_file_checksum.stat.checksum != download_checksum.stdout
