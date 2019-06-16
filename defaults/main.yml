@@ -12,9 +12,15 @@ gitea_install_path: /path/to/gitea
 gitea_uid: 10001
 gitea_gid: 10001
 
-gitea_wrapper: gitea.sh
 gitea_binary: gitea
-gitea_source_binary: gitea-{{ gitea_version }}-{{ ansible_system|lower }}-{{ ansible_machine | replace("x86_64", "amd64") }}
+gitea_compression_scheme: xz
+gitea_source_binary: gitea-{{ gitea_version }}-{{ ansible_system|lower }}-{{ ansible_machine | replace("x86_64", "amd64") }}.{{ gitea_compression_scheme }}
+gitea_uncompressed_binary: gitea-{{ gitea_version }}-{{ ansible_system|lower }}-{{ ansible_machine | replace("x86_64", "amd64") }}
+
+gitea_download_url: "https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-{{ ansible_system | lower }}-{{ ansible_machine | replace('x86_64', 'amd64') }}.{{ gitea_compression_scheme }}"
+
+gitea_gpg_keyid: CC64B1DB67ABBEECAB24B6455FC346329753F4B0
+
 gitea_download: true
 gitea_download_dir: /tmp
 
@@ -47,5 +53,4 @@ gitea_session_provider: redis
 gitea_session_provider_config: network=tcp,addr=127.0.0.1:6379,pool_size=100,idle_timeout=180
 gitea_session_cookie_secure: true
 
-gitea_download_url: "https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-{{ ansible_system | lower }}-{{ ansible_machine | replace('x86_64', 'amd64') }}"
-
+gitea_cache_adapter: none
