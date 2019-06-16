@@ -1,7 +1,15 @@
 
 ---
 
-- include_tasks: create-directories.yaml
+- include: create-directories.yaml
+
+# install a database server if required:
+- include: install-postgres.yaml
+  when: gitea_db_type == 'postgres'
+
+# - include: install-mariadb.yaml
+#  when: "{{ gitea_db_type == 'mariadb' }}"
+
 
 - name: install prerequisite software
   apt:
@@ -26,7 +34,7 @@
       state: present
   tags: serviceuser
 
-- name: create an app directory structure inside the user's home
+- name: create an app directory structure inside the user home
   file:
       dest: "{{ item }}"
       state: directory
@@ -53,19 +61,9 @@
 - name: download the binary to the target machine
   include: get-binary.yml
   when: gitea_download
-  tags: download
-
-- name: download the binary to the controller machine
-  include: copy-binary.yml
-  # when: not gitea_download
-  tags: files
-
-- name: create a file to signal success
-  file:
-      path: "{{ gitea_install_path }}/{{ gitea_version }}.stamp"
-      state: touch
-      mode: 0644
-  tags: files
+  tags:
+    - download
+    - checksums
 
 - name: get a random string
   local_action: command /usr/bin/makepasswd --chars 30
@@ -80,8 +78,6 @@
       gitea_secret: "{{ gitea_secret_key.stdout | default('test run')}}"
   tags: service
 
-- debug: var=gitea_secret
-
 - name: where to store the service file
   file:
       name: /usr/local/lib/systemd/system
@@ -94,6 +90,9 @@
   notify:
       - reload systemd
       - restart gitea
+  tags: service
+
+- meta: flush_handlers
   tags: service
 
 - name: copy the config file
