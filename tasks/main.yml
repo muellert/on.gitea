@@ -1,4 +1,3 @@
-
 ---
 
 - include: create-directories.yaml
@@ -133,4 +132,3 @@
       - reload systemd
       - restart gitea
   tags: service
-

@@ -1,4 +1,3 @@
-
 ---
 
 - name: download the binary locally
@@ -36,4 +35,3 @@
     - restart gitea
   when: download_success.rc == 0
   tags: files
-
