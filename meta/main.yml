@@ -14,7 +14,7 @@ galaxy_info:
   # - GPLv3
   # - Apache
   # - CC-BY
-  license: license (GPLv2, CC-BY, etc)
+  license: GPLv3
 
   min_ansible_version: 2.4
 
@@ -227,7 +227,7 @@ galaxy_info:
 
 dependencies:
 #    - common
-- geerlingguy.nginx
+# - geerlingguy.nginx
   # List your role dependencies here, one per line.
   # Be sure to remove the '[]' above if you add dependencies
   # to this list.

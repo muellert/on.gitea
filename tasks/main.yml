@@ -65,16 +65,17 @@
     - checksums
 
 - name: get a random string
-  local_action: command /usr/bin/makepasswd --chars 30
+  command: /usr/bin/makepasswd --chars 30  # noqa 301
   register: gitea_secret_key
   become: false
+  delegate_to: localhost
   tags:
       - service
       - serviceuser
 
 - name: set the secret key
   set_fact:
-      gitea_secret: "{{ gitea_secret_key.stdout | default('test run')}}"
+      gitea_secret: "{{ gitea_secret_key.stdout | default('test run') }}"
   tags: service
 
 - name: where to store the service file
@@ -110,8 +111,8 @@
 - debug: msg="handlers flushed"
   tags: service
 
-- name: create an admin user
-  command: "{{ gitea_install_path }}/{{ gitea_binary }} admin create-user --name {{ gitea_admin_username }} --password {{ gitea_admin_password | quote }} --email {{ gitea_admin_email  }} --admin"
+- name: create a gitea admin user
+  command: "{{ gitea_install_path }}/{{ gitea_binary }} admin create-user --name {{ gitea_admin_username }} --password {{ gitea_admin_password | quote }} --email {{ gitea_admin_email  }} --admin"  # noqa 204 301
   become: true
   become_user: "{{ gitea_user }}"
   ignore_errors: yes

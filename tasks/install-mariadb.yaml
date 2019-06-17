@@ -10,4 +10,4 @@
         - mariadb-client
         - python-mysqldb
         - python3-mysqldb
-  when: "{{ gitea_db_host == 'localhost' }}"
+  when: gitea_db_host == 'localhost'

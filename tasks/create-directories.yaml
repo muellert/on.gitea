@@ -1,7 +1,9 @@
 ---
 
 - name: create the basic directory infrastructure
-  command: mkdir -p {{ item }}
+  file:
+      path: "{{ item }}"
+      state: directory
   with_items:
       - "{{ gitea_repo_root }}"
       - "{{ gitea_log_dir }}"

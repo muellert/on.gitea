@@ -1,7 +1,6 @@
 ---
 
 - name: download the binary locally
-  # local_action:
   get_url:
       url: "{{ item }}"
       dest: "{{ gitea_download_dir }}"
@@ -17,7 +16,9 @@
   args:
     chdir: "{{ gitea_download_dir }}"
   register: download_success
-  tags: files
+  tags:
+      - files
+      - skip_ansible_lint
 
 - name: display the result of the previous command
   debug: var=download_success

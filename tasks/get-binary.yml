@@ -15,7 +15,7 @@
 
 
 - name: put the new checksum into a variable
-  shell: "cat {{ gitea_download_dir }}/{{ gitea_uncompressed_binary }}.sha256 | cut -f1 -d ' '"
+  shell: "cat {{ gitea_download_dir }}/{{ gitea_uncompressed_binary }}.sha256 | cut -f1 -d ' '"   # noqa 301 306
   register: download_checksum
   tags: checksums
 
@@ -33,7 +33,7 @@
   block:
     - debug: msg="Condition evaluated to True."
     - name: get the gitea key
-      shell: "gpg --recv-keys {{ gitea_gpg_keyid }}"
+      command: "gpg --recv-keys {{ gitea_gpg_keyid }}"
 
     - name: download the compressed binary and gpg signature
       get_url:
@@ -46,7 +46,7 @@
           - "{{ gitea_download_url }}.asc"
 
     - name: check the gpg signature
-      shell: "gpg -q --verify {{ gitea_download_dir }}/{{ gitea_source_binary }}.asc  {{ gitea_download_dir }}/{{ gitea_source_binary }}"
+      command: "gpg -q --verify {{ gitea_download_dir }}/{{ gitea_source_binary }}.asc {{ gitea_download_dir }}/{{ gitea_source_binary }}"
       register: gpg_signature_ok
       tags: checksums
 
@@ -64,7 +64,8 @@
 
     # - debug: var=new_file_checksum
 
-    - copy:
+    - name: copy the binary from the download directory to the target directory
+      copy:
         src: "{{ gitea_download_dir }}/{{ gitea_uncompressed_binary }}"
         dest: "{{ gitea_install_path }}/{{ gitea_binary }}"
         owner: root
