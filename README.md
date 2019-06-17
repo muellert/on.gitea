@@ -71,7 +71,7 @@ After installing a database server and creating the database etc.:
 
     - hosts: servers
       roles:
-         - { role: on.gitea, gitea_version: 1.7.4 }
+         - { role: on.gitea, gitea_version: 1.8.3 }
 
 License
 -------
