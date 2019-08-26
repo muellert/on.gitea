@@ -1,26 +1,36 @@
 ---
 
 - include: create-directories.yaml
+  tags:
+      - gitea_infra
 
 # install a database server if required:
 - include: install-postgres.yaml
   when: gitea_db_type == 'postgres'
+  tags:
+      - gitea_infra
 
 - include: install-mariadb.yaml
   when: "{{ gitea_db_type == 'mariadb' }}"
+  tags:
+      - gitea_infra
 
 
 - name: install prerequisite software
   apt:
       name: git
       state: present
+  tags:
+      - gitea_infra
 
 - name: create a suitable group
   group:
       name: "{{ gitea_group }}"
       gid: "{{ gitea_gid }}"
       state: present
-  tags: serviceuser
+  tags:
+      - serviceuser
+      - gitea_infra
 
 - name: create a suitable user
   user:
@@ -31,7 +41,9 @@
       uid: "{{ gitea_uid }}"
       home: "{{ gitea_install_path | dirname }}"
       state: present
-  tags: serviceuser
+  tags:
+      - serviceuser
+      - gitea_infra
 
 - name: create an app directory structure inside the user home
   file:
@@ -46,7 +58,8 @@
       - "{{ gitea_install_path }}/data"
       - "{{ gitea_install_path }}/../log"
       - "{{ gitea_install_path }}/indexers"
-  tags: files
+  tags:
+      - gitea_infra
 
 - name: create a directory for the repositories
   file:
@@ -55,14 +68,14 @@
       owner: "{{ gitea_user }}"
       group: "{{ gitea_group }}"
       mode: 0700
-  tags: files
+  tags:
+      - gitea_infra
 
 - name: download the binary to the target machine
   include: get-binary.yml
   when: gitea_download
   tags:
     - download
-    - checksums
 
 - name: get a random string
   command: /usr/bin/makepasswd --chars 30  # noqa 301

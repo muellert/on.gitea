@@ -12,26 +12,22 @@
       dest: "{{ gitea_download_dir }}"
       mode: 0644
       backup: yes
-
+  tags: download
 
 - name: put the new checksum into a variable
   shell: "cat {{ gitea_download_dir }}/{{ gitea_uncompressed_binary }}.sha256 | cut -f1 -d ' '"   # noqa 301 306
   register: download_checksum
-  tags: checksums
+  tags: download
 
 - name: check whether we have the file already
   stat:
       path: "{{ gitea_install_path }}/{{ gitea_binary }}"
       checksum_algorithm: sha256
   register: old_file_checksum
-  tags: checksums
-
-# - debug: var=old_file_checksum
-# - debug: var=download_checksum
+  tags: download
 
 - name: conditionally download the binary and install it
   block:
-    - debug: msg="Condition evaluated to True."
     - name: get the gitea key
       command: "gpg --recv-keys {{ gitea_gpg_keyid }}"
 
@@ -44,25 +40,23 @@
       with_items:
           - "{{ gitea_download_url }}"
           - "{{ gitea_download_url }}.asc"
+      tags: download
 
     - name: check the gpg signature
       command: "gpg -q --verify {{ gitea_download_dir }}/{{ gitea_source_binary }}.asc {{ gitea_download_dir }}/{{ gitea_source_binary }}"
       register: gpg_signature_ok
-      tags: checksums
-
-    # - debug: var=gpg_signature_ok
+      tags: download
 
     - name: uncompress the downloaded file
       command: "xz -fd {{ gitea_download_dir }}/{{ gitea_source_binary }}"
+      tags: download
 
     - name: check whether a newly downloaded file is ok
       stat:
           path: "{{ gitea_download_dir }}/{{ gitea_uncompressed_binary }}"
           checksum_algorithm: sha256
       register: new_file_checksum
-      tags: checksums
-
-    # - debug: var=new_file_checksum
+      tags: download
 
     - name: copy the binary from the download directory to the target directory
       copy:
@@ -74,12 +68,14 @@
         backup: yes
       notify:
         - restart gitea
+      tags: download
 
     - name: create a file to signal success
       file:
           path: "{{ gitea_install_path }}/{{ gitea_version }}.stamp"
           state: touch
           mode: 0644
-      tags: files
+      tags: download
 
   when: not old_file_checksum.stat.exists or old_file_checksum.stat.checksum != download_checksum.stdout
+  tags: download
