@@ -32,6 +32,15 @@
       - serviceuser
       - gitea_infra
 
+- name: make sure the path to the home dir exists
+  file:
+    dest: "{{ gitea_install_path | dirname }}"
+    mode: 0755
+    state: directory
+    recurse: yes
+  tags:
+      - gitea_infra
+
 - name: create a suitable user
   user:
       name: "{{ gitea_user }}"
