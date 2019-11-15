@@ -80,6 +80,14 @@
   tags:
       - gitea_infra
 
+- name: copy the gpg key to the target
+  copy:
+    src: gitea.key
+    dest: /var/tmp/gitea.key
+
+- name: import the key into the keyring
+  command: gpg --import /var/tmp/gitea.key
+
 - name: download the binary to the target machine
   include: get-binary.yml
   when: gitea_download
