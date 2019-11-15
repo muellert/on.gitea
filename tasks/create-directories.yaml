@@ -3,7 +3,10 @@
 - name: create the basic directory infrastructure
   file:
       path: "{{ item }}"
+      owner: root
+      mode: 0755
       state: directory
+#       recurse: yes
   with_items:
       - "{{ gitea_repo_root }}"
       - "{{ gitea_log_dir }}"
