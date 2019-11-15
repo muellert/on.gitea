@@ -18,11 +18,16 @@ FORCE_PRIVATE = true
 
 [server]
 
-PROTOCOL         = {{ gitea_http_port }}
+PROTOCOL         = {{ gitea_http_protocol }}
 
 HTTP_ADDR        = {{ gitea_http_addr }}
 HTTP_PORT        = {{ gitea_http_port }}
+{% if gitea_http_protocol == 'https' and gitea_http_port != '443' or
+      gitea_http_protocol == 'http' and gitea_http_port != '80' %}
+ROOT_URL         = {{ gitea_http_protocol }}://{{ gitea_http_urlhost }}:{{ gitea_http_port }}{{ gitea_url_path | default('/') }}
+{% else %}
 ROOT_URL         = {{ gitea_http_protocol }}://{{ gitea_http_urlhost }}{{ gitea_url_path | default('/') }}
+{% endif %}
 DISABLE_SSH      = false
 SSH_PORT         = {{ gitea_ssh_port }}
 
