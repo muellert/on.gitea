@@ -125,6 +125,21 @@
 - meta: flush_handlers
   tags: service
 
+# make it work (mainly) on localhost:
+- name: allow unsecure cookies if the protocol is http
+  set_fact:
+    gitea_session_cookie_secure: false
+  when: gitea_http_protocol == 'http'
+  tags: service
+
+- name: copy the config file (backup copy)
+  template:
+      src: templates/app.ini.j2
+      dest: "/tmp/app.ini"
+      owner: "{{ gitea_user }}"
+      group: "{{ gitea_group }}"
+  tags: service
+
 - name: copy the config file
   template:
       src: templates/app.ini.j2
