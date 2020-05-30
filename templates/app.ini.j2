@@ -22,8 +22,9 @@ PROTOCOL         = {{ gitea_http_protocol }}
 
 HTTP_ADDR        = {{ gitea_http_addr }}
 HTTP_PORT        = {{ gitea_http_port }}
-{% if gitea_http_protocol == 'https' and gitea_http_port != '443' or
-      gitea_http_protocol == 'http' and gitea_http_port != '80' %}
+
+{% if gitea_http_protocol == 'https' and gitea_public_http_port != '443' or
+      gitea_http_protocol == 'http' and gitea_public_http_port != '80' %}
 ROOT_URL         = {{ gitea_http_protocol }}://{{ gitea_http_urlhost }}:{{ gitea_http_port }}{{ gitea_url_path | default('/') }}
 {% else %}
 ROOT_URL         = {{ gitea_http_protocol }}://{{ gitea_http_urlhost }}{{ gitea_url_path | default('/') }}
@@ -53,7 +54,7 @@ ENABLED = false
 {% endif %}
 
 
-{% if gitea_cache_adapter != "none" %}
+{% if gitea_cache_adapter != none %}
 
 [cache]
 ADAPTER = {{ gitea_cache_adapter }}
@@ -74,7 +75,7 @@ NO_REPLY_ADDRESS           = noreply.example.com
 DISABLE_GRAVATAR        = true
 ENABLE_FEDERATED_AVATAR = false
 
-{% if gitea_session_provider != "none" %}
+{% if gitea_session_provider != none %}
 [session]
 PROVIDER = {{ gitea_session_provider }}
 PROVIDER_CONFIG = {{ gitea_session_provider_config }}
