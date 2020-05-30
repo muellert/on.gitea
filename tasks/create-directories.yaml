@@ -1,12 +1,16 @@
 ---
 
-- name: create the basic directory infrastructure
+- name: create the log dir
   file:
-      path: "{{ item }}"
+      path: "{{ gitea_log_dir }}"
       owner: root
-      mode: 0755
+      mode: 0700
       state: directory
-#       recurse: yes
-  with_items:
-      - "{{ gitea_repo_root }}"
-      - "{{ gitea_log_dir }}"
+
+
+- name: create the repo dir
+  file:
+      path: "{{ gitea_repo_root }}"
+      owner: "{{ gitea_uid }}"
+      mode: 0700
+      state: directory
