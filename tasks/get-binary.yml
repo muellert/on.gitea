@@ -28,8 +28,13 @@
 
 - name: conditionally download the binary and install it
   block:
+    - name: transfer the gitea key
+      copy:
+          src: gitea.key
+          dest: /tmp/gitea.key
+
     - name: get the gitea key
-      command: "gpg --recv-keys {{ gitea_gpg_keyid }}"
+      command: "gpg --import /tmp/gitea.key"
 
     - name: download the compressed binary and gpg signature
       get_url:
