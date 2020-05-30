@@ -47,6 +47,7 @@
       group: "{{ gitea_group }}"
       shell: /bin/bash
       generate_ssh_key: yes
+      ssh_key_bits: 4096
       uid: "{{ gitea_uid }}"
       home: "{{ gitea_install_path | dirname }}"
       state: present
@@ -138,6 +139,7 @@
       dest: "/tmp/app.ini"
       owner: "{{ gitea_user }}"
       group: "{{ gitea_group }}"
+  debugger: on_failed
   tags: service
 
 - name: copy the config file
