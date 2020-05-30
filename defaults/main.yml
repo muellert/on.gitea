@@ -1,6 +1,6 @@
 ---
 
-gitea_version: 1.10.0
+gitea_version: 1.11.6
 
 
 gitea_user: _gitea
@@ -18,7 +18,8 @@ gitea_uncompressed_binary: gitea-{{ gitea_version }}-{{ ansible_system|lower }}-
 
 gitea_download_url: "https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-{{ ansible_system | lower }}-{{ ansible_machine | replace('x86_64', 'amd64') }}.{{ gitea_compression_scheme }}"
 
-gitea_gpg_keyid: CC64B1DB67ABBEECAB24B6455FC346329753F4B0
+# gitea_gpg_keyid: CC64B1DB67ABBEECAB24B6455FC346329753F4B0
+gitea_gpg_keyid: 7C9E68152594688862D62AF62D9AE806EC1592E2
 
 gitea_download: true
 gitea_download_dir: /tmp
