@@ -140,21 +140,21 @@
 - name: copy the config file (backup copy)
   become: yes
   template:
-      src: templates/app.ini.j2
-      dest: "/tmp/app.ini"
-      owner: "{{ gitea_user }}"
-      group: "{{ gitea_group }}"
+    src: templates/app.ini.j2
+    dest: "/tmp/app.ini"
+    owner: "{{ gitea_user }}"
+    group: "{{ gitea_group }}"
   debugger: on_failed
   tags: service
 
 - name: copy the config file
   become: yes
   template:
-      src: templates/app.ini.j2
-      dest: "{{ gitea_install_path }}/custom/conf/app.ini"
-      backup: true
-      owner: "{{ gitea_user }}"
-      group: "{{ gitea_group }}"
+    src: templates/app.ini.j2
+    dest: "{{ gitea_install_path }}/custom/conf/app.ini"
+    backup: true
+    owner: "{{ gitea_user }}"
+    group: "{{ gitea_group }}"
   notify:
       - restart gitea
   tags: service
@@ -174,17 +174,17 @@
 - name: enable the service
   become: yes
   service:
-      name: gitea
-      enabled: yes
+    name: gitea
+    enabled: yes
   tags: service
 
 - name: enable the gitea service
   become: yes
   systemd:
-      name: gitea
-      enabled: yes
-      daemon_reload: yes
+    name: gitea
+    enabled: yes
+    daemon_reload: yes
   notify:
-      - reload systemd
-      - restart gitea
+    - reload systemd
+    - restart gitea
   tags: service
