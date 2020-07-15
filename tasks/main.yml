@@ -1,6 +1,7 @@
 ---
 
 - include: create-directories.yaml
+  become: yes
   tags:
       - gitea_infra
 
@@ -33,6 +34,7 @@
       - gitea_infra
 
 - name: make sure the path to the home dir exists
+  become: yes
   file:
     dest: "{{ gitea_install_path | dirname }}"
     mode: 0755
@@ -56,6 +58,7 @@
       - gitea_infra
 
 - name: create an app directory structure inside the user home
+  become: yes
   file:
       dest: "{{ item }}"
       state: directory
@@ -72,6 +75,7 @@
       - gitea_infra
 
 - name: create a directory for the repositories
+  become: yes
   file:
       dest: "{{ gitea_repo_root }}"
       state: directory
@@ -134,6 +138,7 @@
   tags: service
 
 - name: copy the config file (backup copy)
+  become: yes
   template:
       src: templates/app.ini.j2
       dest: "/tmp/app.ini"
@@ -143,6 +148,7 @@
   tags: service
 
 - name: copy the config file
+  become: yes
   template:
       src: templates/app.ini.j2
       dest: "{{ gitea_install_path }}/custom/conf/app.ini"
@@ -166,12 +172,14 @@
   tags: service
 
 - name: enable the service
+  become: yes
   service:
       name: gitea
       enabled: yes
   tags: service
 
 - name: enable the gitea service
+  become: yes
   systemd:
       name: gitea
       enabled: yes

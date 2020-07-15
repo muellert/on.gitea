@@ -20,6 +20,7 @@
   tags: download
 
 - name: check whether we have the file already
+  become: yes
   stat:
       path: "{{ gitea_install_path }}/{{ gitea_binary }}"
       checksum_algorithm: sha256
@@ -64,6 +65,7 @@
       tags: download
 
     - name: copy the binary from the download directory to the target directory
+      become: yes
       copy:
         src: "{{ gitea_download_dir }}/{{ gitea_uncompressed_binary }}"
         dest: "{{ gitea_install_path }}/{{ gitea_binary }}"
@@ -76,6 +78,7 @@
       tags: download
 
     - name: create a file to signal success
+      become: yes
       file:
           path: "{{ gitea_install_path }}/{{ gitea_version }}.stamp"
           state: touch
