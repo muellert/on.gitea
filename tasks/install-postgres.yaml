@@ -7,30 +7,30 @@
 
 - name: conditionally install a PostgreSQL server
   apt:
-      name: "{{ packages }}"
-      state: present
+    name: "{{ packages }}"
+    state: present
   vars:
-      packages:
-        - postgresql
-        - postgresql-client
-        - python-psycopg2
-        - python3-psycopg2
+    packages:
+      - postgresql
+      - postgresql-client
+      - python-psycopg2
+      - python3-psycopg2
   when: gitea_db_host == 'localhost'
 
 
 - name: create the gitea db user
   postgresql_user:
-      name: "{{ gitea_db_user }}"
-      password: "{{ gitea_db_pass }}"
-      role_attr_flags: LOGIN
+    name: "{{ gitea_db_user }}"
+    password: "{{ gitea_db_pass }}"
+    role_attr_flags: LOGIN
   become: true
   become_user: postgres
 
 
 - name: create the gitea database
   postgresql_db:
-      name: "{{ gitea_db_name }}"
-      owner: "{{ gitea_db_user }}"
-      encoding: UTF-8
+    name: "{{ gitea_db_name }}"
+    owner: "{{ gitea_db_user }}"
+    encoding: UTF-8
   become: true
   become_user: postgres
