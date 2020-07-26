@@ -177,7 +177,7 @@
   tags: service
 
 - name: create a gitea admin user
-  command: "{{ gitea_install_path }}/{{ gitea_binary }} admin create-user --name {{ gitea_admin_username }} --password {{ gitea_admin_password | quote }} --email {{ gitea_admin_email  }} --admin"  # noqa 204 301
+  command: "{{ gitea_install_path }}/{{ gitea_binary }} admin create-user --username {{ gitea_admin_username }} --password {{ gitea_admin_password | quote }} --email {{ gitea_admin_email  }} --admin"  # noqa 204 301
   become: true
   become_user: "{{ gitea_user }}"
   ignore_errors: yes
