@@ -180,7 +180,15 @@
   command: "{{ gitea_install_path }}/{{ gitea_binary }} admin create-user --username {{ gitea_admin_username }} --password {{ gitea_admin_password | quote }} --email {{ gitea_admin_email  }} --admin"  # noqa 204 301
   become: true
   become_user: "{{ gitea_user }}"
+  register: admin_user_result
   ignore_errors: yes
+  tags: service
+
+- name: change the password for an existing admin user if there was an error
+  command: "{{ gitea_install_path }}/{{ gitea_binary }} admin change-password -u {{ gitea_admin_username }} -p {{ gitea_admin_password | quote }}"  # noqa 204 301
+  become: true
+  become_user: "{{ gitea_user }}"
+  when: admin_user_result.rc != 0
   tags: service
 
 - name: enable the service
