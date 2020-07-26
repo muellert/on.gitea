@@ -54,3 +54,5 @@ gitea_session_provider_config: network=tcp,addr=127.0.0.1:6379,pool_size=100,idl
 gitea_session_cookie_secure: true
 
 gitea_cache_adapter: none
+
+gitea_password_complexity: lower,upper,digit,spec

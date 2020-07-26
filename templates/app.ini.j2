@@ -92,6 +92,8 @@ ROOT_PATH = {{ gitea_log_dir }}
 INSTALL_LOCK = true
 SECRET_KEY   = {{ gitea_secret }}
 
+PASSWORD_COMPLEXITY = {{ gitea_password_complexity }}
+
 
 [ssh.minimum_key_sizes]
 ED25519 = 256
