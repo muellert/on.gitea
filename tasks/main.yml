@@ -68,9 +68,21 @@
   with_items:
       - "{{ gitea_install_path | dirname }}"
       - "{{ gitea_install_path }}/custom/conf"
+      - "{{ gitea_install_path }}/custom/options/label"
       - "{{ gitea_install_path }}/data"
       - "{{ gitea_install_path }}/../log"
       - "{{ gitea_install_path }}/indexers"
+  tags:
+      - gitea_infra
+
+- name: copy global labels file
+  become: yes
+  copy:
+      src: global.labels
+      dest: "{{ gitea_install_path }}/custom/options/label"
+      owner: "{{ gitea_user }}"
+      group: "{{ gitea_group }}"
+      mode: 0640
   tags:
       - gitea_infra
 

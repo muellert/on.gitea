@@ -1,0 +1,19 @@
+
+#ee0701 bug ; Something is not working
+#cccccc duplicate ; This issue or pull request already exists
+#84b6eb enhancement ; small improvement
+#128a0c help wanted ; Need some help
+#e6e6e6 invalid ; Something is wrong
+#cc317c question ; More information is needed
+#ffffff wontfix ; This won't be fixed
+#0E8A16 lgtm/done ; done, but could use more eyeballs
+#FBCA04 backport ; -
+
+#0052CC security ; security risk
+#5319E7 api ; api related
+#C2E0C6 docs ; documentation problem
+#FEF2C0 ui ; user interface
+#006B75 feature ; New feature
+#C2E0C6 changelog ; changelog needs maintenance
+#B60205 build ; build process
+
