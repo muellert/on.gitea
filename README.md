@@ -25,21 +25,21 @@ Upgrade gitea:
 
 Playbook used:
 
----
+    ---
 
-- hosts: all
-  remote_user: root
-  tasks:
-    - name: install a database server
-      apt:
-        name: python-psycopg2
-        state: present
+    - hosts: all
+      remote_user: root
+      tasks:
+        - name: install a database server
+          apt:
+            name: python-psycopg2
+            state: present
 
 
-- hosts: all
-  remote_user: root
-  roles:
-      - role: on.gitea
+    - hosts: all
+      remote_user: root
+      roles:
+          - role: on.gitea
 
 
 
