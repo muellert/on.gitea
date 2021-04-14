@@ -13,11 +13,41 @@ session store, and nginx as a frontend, and on Debian/Stretch. For other
 scenarios, you might need to make some adjustments.
 
 
+Install gitea for the first time:
+
+    $ ansible-playbook -i ./inventory -l targethost install-gitea.yaml
+
+
+Upgrade gitea:
+
+    $ ansible-playbook -i ./inventory -l targethost  -e gitea_version="1.14.0" -vv install-gitea.yaml -t download
+
+
+Playbook used:
+
+---
+
+- hosts: all
+  remote_user: root
+  tasks:
+    - name: install a database server
+      apt:
+        name: python-psycopg2
+        state: present
+
+
+- hosts: all
+  remote_user: root
+  roles:
+      - role: on.gitea
+
+
+
 Requirements
 ------------
 
 This role has currently only been tested on Debian Stretch and Buster,
-and with Ansible version 2.7.
+and with Ansible version 2.9.
 
 
 Role Variables
@@ -71,7 +101,7 @@ After installing a database server and creating the database etc.:
 
     - hosts: servers
       roles:
-         - { role: on.gitea, gitea_version: 1.8.3 }
+         - { role: on.gitea, gitea_version: 1.14.0 }
 
 License
 -------
@@ -85,5 +115,5 @@ Author Information
 ------------------
 
 Toni Mueller <support@oeko.net>
-(c) 2017-2019
+(c) 2017-2021
 
